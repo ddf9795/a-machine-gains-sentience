@@ -1,0 +1,353 @@
+[gd_scene load_steps=34 format=2]
+
+[ext_resource path="res://sfx/4.wav" type="AudioStream" id=1]
+[ext_resource path="res://sfx/1.wav" type="AudioStream" id=2]
+[ext_resource path="res://ViewportContainer.gd" type="Script" id=3]
+[ext_resource path="res://Root.gd" type="Script" id=4]
+[ext_resource path="res://sfx/2.wav" type="AudioStream" id=5]
+[ext_resource path="res://sfx/3.wav" type="AudioStream" id=6]
+[ext_resource path="res://sfx/5.wav" type="AudioStream" id=7]
+[ext_resource path="res://sfx/6.wav" type="AudioStream" id=8]
+[ext_resource path="res://sfx/sine.mp3" type="AudioStream" id=9]
+[ext_resource path="res://sfx/Blip_select 45.wav" type="AudioStream" id=10]
+[ext_resource path="res://sfx/Blip_select 46.wav" type="AudioStream" id=11]
+[ext_resource path="res://sfx/Blip_select 44.wav" type="AudioStream" id=12]
+[ext_resource path="res://sfx/whirr.mp3" type="AudioStream" id=13]
+[ext_resource path="res://question.png" type="Texture" id=14]
+
+[sub_resource type="VisualShaderNodeColorOp" id=13]
+output_port_for_preview = 0
+operator = 1
+
+[sub_resource type="OpenSimplexNoise" id=3]
+octaves = 9
+
+[sub_resource type="NoiseTexture" id=4]
+noise = SubResource( 3 )
+
+[sub_resource type="VisualShaderNodeTexture" id=5]
+output_port_for_preview = 0
+source = 5
+texture = SubResource( 4 )
+
+[sub_resource type="VisualShaderNodeTextureUniform" id=6]
+output_port_for_preview = 0
+uniform_name = "NoiseMap"
+color_default = 1
+
+[sub_resource type="VisualShaderNodeColorUniform" id=10]
+uniform_name = "ColorIn1"
+default_value_enabled = true
+default_value = Color( 1, 0, 0, 1 )
+
+[sub_resource type="VisualShaderNodeColorUniform" id=11]
+uniform_name = "ColorIn2"
+default_value_enabled = true
+default_value = Color( 0, 0.12289, 1, 1 )
+
+[sub_resource type="VisualShaderNodeColorOp" id=12]
+output_port_for_preview = 0
+
+[sub_resource type="VisualShaderNodeVectorFunc" id=14]
+output_port_for_preview = 0
+function = 34
+
+[sub_resource type="VisualShaderNodeColorOp" id=15]
+output_port_for_preview = 0
+
+[sub_resource type="VisualShader" id=18]
+code = "shader_type canvas_item;
+render_mode blend_sub;
+
+uniform vec4 ColorIn1 : hint_color = vec4(1.000000, 0.000000, 0.000000, 1.000000);
+uniform sampler2D NoiseMap : hint_black;
+uniform vec4 ColorIn2 : hint_color = vec4(0.000000, 0.122890, 1.000000, 1.000000);
+
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// ColorUniform:5
+	vec3 n_out5p0 = ColorIn1.rgb;
+	float n_out5p1 = ColorIn1.a;
+
+// TextureUniform:3
+	vec3 n_out3p0;
+	float n_out3p1;
+	{
+		vec4 n_tex_read = texture(NoiseMap, UV.xy);
+		n_out3p0 = n_tex_read.rgb;
+		n_out3p1 = n_tex_read.a;
+	}
+
+// Texture:2
+	vec3 n_out2p0;
+	float n_out2p1;
+	{
+		vec4 NoiseMap_tex_read = texture(NoiseMap, n_out3p0.xy);
+		n_out2p0 = NoiseMap_tex_read.rgb;
+		n_out2p1 = NoiseMap_tex_read.a;
+	}
+
+// ColorOp:7
+	vec3 n_out7p0 = vec3(1.0) - (vec3(1.0) - n_out5p0) * (vec3(1.0) - n_out2p0);
+
+// ColorUniform:6
+	vec3 n_out6p0 = ColorIn2.rgb;
+	float n_out6p1 = ColorIn2.a;
+
+// VectorFunc:8
+	vec3 n_out8p0 = vec3(1.0, 1.0, 1.0) - n_out2p0;
+
+// ColorOp:9
+	vec3 n_out9p0 = vec3(1.0) - (vec3(1.0) - n_out6p0) * (vec3(1.0) - n_out8p0);
+
+// ColorOp:10
+	vec3 n_out10p0 = abs(n_out7p0 - n_out9p0);
+
+// Output:0
+	COLOR.rgb = n_out10p0;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( -615.312, -98.9144 )
+mode = 1
+modes/blend = 2
+flags/light_only = false
+nodes/fragment/0/position = Vector2( 840, 120 )
+nodes/fragment/2/node = SubResource( 5 )
+nodes/fragment/2/position = Vector2( -20, 160 )
+nodes/fragment/3/node = SubResource( 6 )
+nodes/fragment/3/position = Vector2( -360, 160 )
+nodes/fragment/5/node = SubResource( 10 )
+nodes/fragment/5/position = Vector2( -260, -260 )
+nodes/fragment/6/node = SubResource( 11 )
+nodes/fragment/6/position = Vector2( -260, -100 )
+nodes/fragment/7/node = SubResource( 12 )
+nodes/fragment/7/position = Vector2( 200, -360 )
+nodes/fragment/8/node = SubResource( 14 )
+nodes/fragment/8/position = Vector2( 200, -120 )
+nodes/fragment/9/node = SubResource( 15 )
+nodes/fragment/9/position = Vector2( 400, -120 )
+nodes/fragment/10/node = SubResource( 13 )
+nodes/fragment/10/position = Vector2( 600, -220 )
+nodes/fragment/connections = PoolIntArray( 3, 2, 2, 2, 5, 0, 7, 0, 2, 0, 7, 1, 3, 0, 2, 0, 2, 0, 8, 0, 8, 0, 9, 1, 6, 0, 9, 0, 7, 0, 10, 0, 9, 0, 10, 1, 10, 0, 0, 0 )
+
+[sub_resource type="OpenSimplexNoise" id=7]
+octaves = 9
+
+[sub_resource type="NoiseTexture" id=8]
+noise = SubResource( 7 )
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 18 )
+shader_param/ColorIn1 = Color( 1, 0, 0, 1 )
+shader_param/ColorIn2 = Color( 0, 0.12289, 1, 1 )
+shader_param/NoiseMap = SubResource( 8 )
+
+[sub_resource type="VisualShaderNodeInput" id=19]
+input_name = "texture"
+
+[sub_resource type="VisualShaderNodeTexture" id=20]
+source = 5
+
+[sub_resource type="VisualShaderNodeScalarOp" id=23]
+default_input_values = [ 0, 0.0, 1, 5.0 ]
+operator = 2
+
+[sub_resource type="VisualShader" id=21]
+code = "shader_type canvas_item;
+uniform vec4 ColorIn1 : hint_color = vec4(1.000000, 0.000000, 0.000000, 1.000000);
+uniform sampler2D NoiseMap : hint_black;
+uniform vec4 ColorIn2 : hint_color = vec4(0.000000, 0.122890, 1.000000, 1.000000);
+
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// ColorUniform:5
+	vec3 n_out5p0 = ColorIn1.rgb;
+	float n_out5p1 = ColorIn1.a;
+
+// TextureUniform:3
+	vec3 n_out3p0;
+	float n_out3p1;
+	{
+		vec4 n_tex_read = texture(NoiseMap, UV.xy);
+		n_out3p0 = n_tex_read.rgb;
+		n_out3p1 = n_tex_read.a;
+	}
+
+// Texture:2
+	vec3 n_out2p0;
+	float n_out2p1;
+	{
+		vec4 NoiseMap_tex_read = texture(NoiseMap, n_out3p0.xy);
+		n_out2p0 = NoiseMap_tex_read.rgb;
+		n_out2p1 = NoiseMap_tex_read.a;
+	}
+
+// ColorOp:7
+	vec3 n_out7p0 = vec3(1.0) - (vec3(1.0) - n_out5p0) * (vec3(1.0) - n_out2p0);
+
+// ColorUniform:6
+	vec3 n_out6p0 = ColorIn2.rgb;
+	float n_out6p1 = ColorIn2.a;
+
+// VectorFunc:8
+	vec3 n_out8p0 = vec3(1.0, 1.0, 1.0) - n_out2p0;
+
+// ColorOp:9
+	vec3 n_out9p0 = vec3(1.0) - (vec3(1.0) - n_out6p0) * (vec3(1.0) - n_out8p0);
+
+// ColorOp:10
+	vec3 n_out10p0 = abs(n_out7p0 - n_out9p0);
+
+// Input:11
+
+// Texture:12
+	vec3 n_out12p0;
+	float n_out12p1;
+	{
+		vec4 TEXTURE_tex_read = texture(TEXTURE, UV.xy);
+		n_out12p0 = TEXTURE_tex_read.rgb;
+		n_out12p1 = TEXTURE_tex_read.a;
+	}
+
+// ScalarOp:13
+	float n_in13p1 = 5.00000;
+	float n_out13p0 = n_out12p1 * n_in13p1;
+
+// Output:0
+	COLOR.rgb = n_out10p0;
+	COLOR.a = n_out13p0;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( -126.058, -56.5418 )
+mode = 1
+flags/light_only = false
+nodes/fragment/0/position = Vector2( 1120, 120 )
+nodes/fragment/2/node = SubResource( 5 )
+nodes/fragment/2/position = Vector2( -20, 160 )
+nodes/fragment/3/node = SubResource( 6 )
+nodes/fragment/3/position = Vector2( -360, 160 )
+nodes/fragment/5/node = SubResource( 10 )
+nodes/fragment/5/position = Vector2( -260, -260 )
+nodes/fragment/6/node = SubResource( 11 )
+nodes/fragment/6/position = Vector2( -260, -100 )
+nodes/fragment/7/node = SubResource( 12 )
+nodes/fragment/7/position = Vector2( 200, -360 )
+nodes/fragment/8/node = SubResource( 14 )
+nodes/fragment/8/position = Vector2( 200, -120 )
+nodes/fragment/9/node = SubResource( 15 )
+nodes/fragment/9/position = Vector2( 400, -120 )
+nodes/fragment/10/node = SubResource( 13 )
+nodes/fragment/10/position = Vector2( 600, -220 )
+nodes/fragment/11/node = SubResource( 19 )
+nodes/fragment/11/position = Vector2( 260, 200 )
+nodes/fragment/12/node = SubResource( 20 )
+nodes/fragment/12/position = Vector2( 500, 160 )
+nodes/fragment/13/node = SubResource( 23 )
+nodes/fragment/13/position = Vector2( 820, 140 )
+nodes/fragment/connections = PoolIntArray( 3, 2, 2, 2, 5, 0, 7, 0, 2, 0, 7, 1, 3, 0, 2, 0, 2, 0, 8, 0, 8, 0, 9, 1, 6, 0, 9, 0, 7, 0, 10, 0, 9, 0, 10, 1, 10, 0, 0, 0, 11, 0, 12, 2, 12, 1, 13, 0, 13, 0, 0, 1 )
+
+[sub_resource type="ShaderMaterial" id=22]
+shader = SubResource( 21 )
+shader_param/ColorIn1 = Color( 1, 0, 0, 1 )
+shader_param/ColorIn2 = Color( 0, 0.12289, 1, 1 )
+shader_param/NoiseMap = SubResource( 8 )
+
+[node name="Scene" type="Node2D"]
+script = ExtResource( 4 )
+
+[node name="ViewportContainer" type="ViewportContainer" parent="."]
+material = SubResource( 2 )
+margin_right = 40.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 1920, 1080 )
+script = ExtResource( 3 )
+
+[node name="Label" type="Sprite" parent="ViewportContainer"]
+unique_name_in_owner = true
+material = SubResource( 22 )
+position = Vector2( 964, 519 )
+texture = ExtResource( 14 )
+
+[node name="Viewport" type="Viewport" parent="ViewportContainer"]
+unique_name_in_owner = true
+size = Vector2( 1920, 1080 )
+handle_input_locally = false
+hdr = false
+usage = 0
+render_target_update_mode = 3
+
+[node name="Sounds" type="Node" parent="."]
+
+[node name="1" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 2 )
+volume_db = -8.0
+
+[node name="2" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 5 )
+volume_db = -8.0
+
+[node name="3" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 6 )
+volume_db = -8.0
+
+[node name="4" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 1 )
+volume_db = -8.0
+
+[node name="5" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 7 )
+volume_db = -8.0
+
+[node name="6" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 8 )
+volume_db = -8.0
+
+[node name="Sine" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource( 9 )
+volume_db = -20.0
+autoplay = true
+
+[node name="Whirr" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource( 13 )
+volume_db = -7.0
+autoplay = true
+
+[node name="Sounds2" type="Node" parent="."]
+
+[node name="1" type="AudioStreamPlayer" parent="Sounds2"]
+stream = ExtResource( 12 )
+volume_db = -7.0
+
+[node name="2" type="AudioStreamPlayer" parent="Sounds2"]
+stream = ExtResource( 10 )
+volume_db = -7.0
+
+[node name="3" type="AudioStreamPlayer" parent="Sounds2"]
+stream = ExtResource( 11 )
+volume_db = -7.0
